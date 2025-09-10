@@ -1,0 +1,45 @@
+name: asv_app
+description: ASV Großostheim Vereinsapp
+publish_to: "none"
+version: 0.1.0+1
+
+environment:
+  sdk: ">=3.4.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  go_router: ^14.2.0
+  flutter_riverpod: ^2.5.1
+  supabase_flutter: ^2.5.6
+  http: ^1.2.2
+  google_fonts: ^6.2.1
+  share_plus: ^7.2.1
+  image: ^4.1.7
+  path_provider: ^2.1.4
+  webview_flutter: ^4.8.0
+  shared_preferences: ^2.3.2
+  flutter_svg: ^2.0.9
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/logos/asv_logo.png
+    - assets/logos/jugend_logo.png
+    # (falls vorhanden, kannst du weitere Varianten drin lassen:
+    # - assets/logos/asv_logo@2x.png
+    # - assets/logos/jugend_logo_alt.png
+    # Wichtig: Die Dateien müssen physisch existieren.)
+
+flutter_native_splash:
+  color: "#0B0B0B"
+  color_dark: "#0B0B0B"
+  image: assets/logos/asv_logo.png
+  android_12:
+    image: assets/logos/asv_logo.png
+    icon_background_color: "#0B0B0B"
