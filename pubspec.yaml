@@ -16,9 +16,12 @@ dependencies:
   google_fonts: ^6.2.1
   share_plus: ^7.2.1
   image: ^4.1.7
+  image_picker: ^0.8.7
   path_provider: ^2.1.4
+  path: ^1.8.2
   webview_flutter: ^4.8.0
   shared_preferences: ^2.3.2
+  flutter_typeahead: ^4.0.0
   flutter_svg: ^2.0.9
 
 dev_dependencies:

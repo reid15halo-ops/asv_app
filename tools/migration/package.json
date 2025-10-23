@@ -1,0 +1,12 @@
+{
+  "name": "asv-migrate-catches",
+  "version": "1.0.0",
+  "description": "Migration script to export DB 'catch' rows into per-user/year JSON files in Supabase Storage.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.29.0"
+  }
+}

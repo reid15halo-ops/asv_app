@@ -1,0 +1,36 @@
+name: Annual Catchbook Export
+
+on:
+  schedule:
+    # Run every year on Dec 31 at 02:00 UTC
+    - cron: '0 2 31 12 *'
+  workflow_dispatch: {}
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - name: Authorize via Edge Function
+        id: auth
+        run: |
+          echo "Calling Edge Function for authorization..."
+          resp=$(curl -s -o /dev/null -w "%{http_code}" -X POST "${{ secrets.EXPORT_EDGE_URL }}" -H "x-export-secret: ${{ secrets.EXPORT_EDGE_SECRET }}" -H "Content-Type: application/json" -d '{"year": "'"$(date +%Y)"'"}')
+          echo "edge_status=$resp" >> $GITHUB_OUTPUT
+          if [ "$resp" != "200" ]; then
+            echo "Authorization failed with status $resp"
+            exit 1
+          fi
+      - name: Trigger server-side export (Edge Function)
+        run: |
+          echo "Triggering Edge Function to perform export..."
+          resp=$(curl -s -o /dev/null -w "%{http_code}" -X POST "${{ secrets.EXPORT_EDGE_URL }}" -H "x-export-secret: ${{ secrets.EXPORT_EDGE_SECRET }}" -H "Content-Type: application/json" -d '{"year": "'"$(date +%Y)"'"}')
+          echo "edge_status=$resp" >> $GITHUB_OUTPUT
+          if [ "$resp" != "200" ]; then
+            echo "Edge export failed with status $resp"
+            exit 1
+          fi
