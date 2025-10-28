@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:asv_app/providers/member_group_provider.dart';
+import 'package:asv_app/providers/notification_provider.dart';
 import 'package:asv_app/models/member_group.dart';
 import 'package:asv_app/features/dashboard/jugend_dashboard.dart';
 
@@ -42,7 +43,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       appBar: AppBar(
         title: const Text('ASV Dashboard'),
         actions: [
-          if (user != null)
+          if (user != null) ...[
+            // Notification Bell mit Badge
+            _NotificationBadge(),
             IconButton(
               tooltip: 'Abmelden',
               onPressed: () async {
@@ -52,6 +55,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               },
               icon: const Icon(Icons.logout),
             ),
+          ],
         ],
       ),
       body: Center(
@@ -83,6 +87,39 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             child: const Text('Ranking ansehen'),
           ),
         ]),
+      ),
+    );
+  }
+}
+
+/// Notification Badge Widget für AppBar
+class _NotificationBadge extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Verwende Stream Provider für Realtime Updates
+    final unreadCountAsync = ref.watch(unreadNotificationsCountStreamProvider);
+
+    return unreadCountAsync.when(
+      data: (count) {
+        return IconButton(
+          tooltip: 'Benachrichtigungen',
+          onPressed: () => context.push('/notifications'),
+          icon: Badge(
+            label: Text('$count'),
+            isLabelVisible: count > 0,
+            child: const Icon(Icons.notifications),
+          ),
+        );
+      },
+      loading: () => IconButton(
+        tooltip: 'Benachrichtigungen',
+        onPressed: () => context.push('/notifications'),
+        icon: const Icon(Icons.notifications),
+      ),
+      error: (_, __) => IconButton(
+        tooltip: 'Benachrichtigungen',
+        onPressed: () => context.push('/notifications'),
+        icon: const Icon(Icons.notifications),
       ),
     );
   }

@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:asv_app/widgets/jugend_widgets.dart';
 import 'package:asv_app/theme/theme.dart';
 import 'package:asv_app/providers/gamification_provider.dart';
+import 'package:asv_app/providers/notification_provider.dart';
 
 /// Spezielles Dashboard für Jugend mit modernem Design und Gamification
 class JugendDashboard extends ConsumerStatefulWidget {
@@ -119,7 +120,9 @@ class _JugendDashboardState extends ConsumerState<JugendDashboard>
                   ),
                 ),
                 actions: [
-                  if (user != null)
+                  if (user != null) ...[
+                    // Notification Bell mit Badge
+                    _JugendNotificationBadge(),
                     IconButton(
                       tooltip: 'Abmelden',
                       onPressed: () async {
@@ -128,6 +131,7 @@ class _JugendDashboardState extends ConsumerState<JugendDashboard>
                       },
                       icon: const Icon(Icons.logout, color: Colors.white),
                     ),
+                  ],
                 ],
               ),
 
@@ -431,6 +435,40 @@ class _JugendDashboardState extends ConsumerState<JugendDashboard>
               }).toList(),
             ),
         ],
+      ),
+    );
+  }
+}
+
+/// Notification Badge Widget für Jugend Dashboard (mit weißem Icon)
+class _JugendNotificationBadge extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final unreadCountAsync = ref.watch(unreadNotificationsCountStreamProvider);
+
+    return unreadCountAsync.when(
+      data: (count) {
+        return IconButton(
+          tooltip: 'Benachrichtigungen',
+          onPressed: () => context.push('/notifications'),
+          icon: Badge(
+            label: Text('$count'),
+            isLabelVisible: count > 0,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            child: const Icon(Icons.notifications, color: Colors.white),
+          ),
+        );
+      },
+      loading: () => IconButton(
+        tooltip: 'Benachrichtigungen',
+        onPressed: () => context.push('/notifications'),
+        icon: const Icon(Icons.notifications, color: Colors.white),
+      ),
+      error: (_, __) => IconButton(
+        tooltip: 'Benachrichtigungen',
+        onPressed: () => context.push('/notifications'),
+        icon: const Icon(Icons.notifications, color: Colors.white),
       ),
     );
   }

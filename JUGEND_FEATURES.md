@@ -458,7 +458,6 @@ final leaderboard = await supabase
 - [ ] Soziale Features (Freunde, Challenges)
 - [ ] Mehr Achievements (100+)
 - [ ] Saisonale Events
-- [ ] Belohnungssystem (Shop, Avatare)
 - [ ] Animierte Level-Up-Screen
 - [ ] Teilen-Funktion für Achievements
 - [ ] Catch-of-the-Day Feature
