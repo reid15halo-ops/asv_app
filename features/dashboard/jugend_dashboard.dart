@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:asv_app/widgets/jugend_widgets.dart';
 import 'package:asv_app/theme/theme.dart';
 import 'package:asv_app/providers/gamification_provider.dart';
+import 'package:asv_app/widgets/jugend_instagram_widget.dart';
 
 /// Spezielles Dashboard für Jugend mit modernem Design und Gamification
 class JugendDashboard extends ConsumerStatefulWidget {
@@ -176,6 +177,18 @@ class _JugendDashboardState extends ConsumerState<JugendDashboard>
                           ),
                           const SizedBox(height: 16),
                           _buildAchievements(achievements),
+                          const SizedBox(height: 24),
+
+                          // Instagram
+                          const Text(
+                            'Social Media',
+                            style: TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          const JugendInstagramCard(),
                           const SizedBox(height: 20),
                         ],
                       ),

@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:asv_app/providers/member_group_provider.dart';
 import 'package:asv_app/models/member_group.dart';
 import 'package:asv_app/features/dashboard/jugend_dashboard.dart';
+import 'package:asv_app/widgets/instagram_widget.dart';
 
 class DashboardScreen extends ConsumerStatefulWidget {
   const DashboardScreen({super.key});
@@ -54,35 +55,47 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             ),
         ],
       ),
-      body: Center(
-        child: Column(mainAxisSize: MainAxisSize.min, children: [
-          // Gruppenspezifisches Logo
-          Image.asset(
-            logo,
-            width: 120,
-            height: 120,
-            fit: BoxFit.contain,
-            errorBuilder: (_, __, ___) => const Icon(Icons.image, size: 120),
-          ),
-          const SizedBox(height: 16),
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Text(
-              'Willkommen, $groupName!',
-              style: Theme.of(context).textTheme.headlineSmall,
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Gruppenspezifisches Logo
+            Center(
+              child: Image.asset(
+                logo,
+                width: 120,
+                height: 120,
+                fit: BoxFit.contain,
+                errorBuilder: (_, __, ___) => const Icon(Icons.image, size: 120),
+              ),
             ),
-          ),
-          const SizedBox(height: 12),
-          ElevatedButton(
-            onPressed: () => context.push('/catch/new'),
-            child: const Text('Fang erfassen'),
-          ),
-          const SizedBox(height: 8),
-          OutlinedButton(
-            onPressed: () => context.push('/ranking'),
-            child: const Text('Ranking ansehen'),
-          ),
-        ]),
+            const SizedBox(height: 16),
+            // Begrüßung
+            Center(
+              child: Text(
+                'Willkommen, $groupName!',
+                style: Theme.of(context).textTheme.headlineSmall,
+                textAlign: TextAlign.center,
+              ),
+            ),
+            const SizedBox(height: 24),
+            // Buttons
+            ElevatedButton(
+              onPressed: () => context.push('/catch/new'),
+              child: const Text('Fang erfassen'),
+            ),
+            const SizedBox(height: 8),
+            OutlinedButton(
+              onPressed: () => context.push('/ranking'),
+              child: const Text('Ranking ansehen'),
+            ),
+            const SizedBox(height: 24),
+            // Instagram Widget
+            const InstagramWidget(),
+            const SizedBox(height: 16),
+          ],
+        ),
       ),
     );
   }
