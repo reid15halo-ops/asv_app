@@ -1,6 +1,7 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'dart:convert';
 import 'package:asv_app/services/storage_service.dart';
+import 'package:asv_app/repositories/member_repository.dart';
 
 String _yearKey(String userId, int year) => 'users/$userId/catches-$year.json';
 
@@ -10,11 +11,10 @@ class CatchRepository {
   final SupabaseClient supa;
   CatchRepository(this.supa);
   StorageService get _storage => StorageService(supa);
+  MemberRepository get _memberRepo => MemberRepository(supa);
 
   Future<int?> findMemberIdForUser(String userId) async {
-    final res = await supa.from('member').select('id').eq('user_id', userId).maybeSingle();
-    if (res == null) return null;
-    return res['id'] as int? ?? (res['id'] as num?)?.toInt();
+    return _memberRepo.findMemberIdForUser(userId);
   }
 
   Future<void> insertCatch(Map<String, dynamic> data) async {
