@@ -444,7 +444,8 @@ class _JugendDashboardState extends ConsumerState<JugendDashboard>
 class _JugendNotificationBadge extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final unreadCountAsync = ref.watch(unreadNotificationsCountStreamProvider);
+    // Verwende Future Provider (funktioniert ohne Realtime)
+    final unreadCountAsync = ref.watch(unreadNotificationsCountProvider);
 
     return unreadCountAsync.when(
       data: (count) {

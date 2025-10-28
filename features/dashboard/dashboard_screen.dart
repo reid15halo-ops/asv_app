@@ -96,8 +96,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 class _NotificationBadge extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Verwende Stream Provider für Realtime Updates
-    final unreadCountAsync = ref.watch(unreadNotificationsCountStreamProvider);
+    // Verwende Future Provider (funktioniert ohne Realtime)
+    final unreadCountAsync = ref.watch(unreadNotificationsCountProvider);
 
     return unreadCountAsync.when(
       data: (count) {
