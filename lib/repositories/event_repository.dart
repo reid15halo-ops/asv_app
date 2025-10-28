@@ -1,6 +1,10 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:asv_app/models/event.dart';
 import 'package:asv_app/services/event_csv_service.dart';
+import 'package:asv_app/services/event_ics_service.dart';
+import 'package:share_plus/share_plus.dart';
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
 
 class EventRepository {
   final SupabaseClient supa;
@@ -396,5 +400,108 @@ class EventRepository {
   /// Teilt CSV-Template
   Future<void> shareCsvTemplate() async {
     await EventCsvService.shareTemplate();
+  }
+
+  // ===== ICS (iCalendar) Export Funktionen =====
+
+  /// Exportiert alle Events als ICS String
+  Future<String> exportAllEventsToIcs() async {
+    try {
+      final response = await supa
+          .from('events')
+          .select('*')
+          .order('start_date', ascending: true);
+
+      final events = (response as List).map((e) => Event.fromJson(e)).toList();
+      return EventIcsService.exportEventsToIcs(events);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  /// Exportiert kommende Events als ICS und teilt sie
+  Future<void> exportUpcomingEventsAsIcs() async {
+    try {
+      final events = await getUpcomingEvents(limit: 1000);
+      await _exportAndShareIcs(events, filename: 'kommende_events');
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  /// Exportiert alle Events als ICS und teilt sie
+  Future<void> exportAllEventsAsIcs() async {
+    try {
+      final response = await supa
+          .from('events')
+          .select('*')
+          .order('start_date', ascending: true);
+
+      final events = (response as List).map((e) => Event.fromJson(e)).toList();
+      await _exportAndShareIcs(events, filename: 'alle_events');
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  /// Exportiert Events für eine spezifische Gruppe als ICS
+  Future<void> exportGroupEventsAsIcs(EventTargetGroup group) async {
+    try {
+      final events = await getEventsForGroup(group, limit: 1000, upcomingOnly: false);
+      final groupName = _getGroupName(group);
+      await _exportAndShareIcs(events, filename: 'events_$groupName');
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  /// Teilt ICS-Template
+  Future<void> shareIcsTemplate() async {
+    try {
+      final templateContent = EventIcsService.generateIcsTemplate();
+      final tempDir = await getTemporaryDirectory();
+      final file = File('${tempDir.path}/event_template.ics');
+      await file.writeAsString(templateContent);
+
+      await Share.shareXFiles(
+        [XFile(file.path)],
+        subject: 'ASV Grossostheim - ICS Kalender Template',
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  /// Hilfsfunktion zum Exportieren und Teilen von ICS-Dateien
+  Future<void> _exportAndShareIcs(List<Event> events, {required String filename}) async {
+    try {
+      final icsContent = EventIcsService.exportEventsToIcs(events);
+      final tempDir = await getTemporaryDirectory();
+      final timestamp = DateTime.now().millisecondsSinceEpoch;
+      final file = File('${tempDir.path}/${filename}_$timestamp.ics');
+      await file.writeAsString(icsContent);
+
+      await Share.shareXFiles(
+        [XFile(file.path)],
+        subject: 'ASV Grossostheim - Events Kalender',
+        text: 'Kalender mit ${events.length} Events',
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  /// Hilfsfunktion für Gruppennamen
+  String _getGroupName(EventTargetGroup group) {
+    switch (group) {
+      case EventTargetGroup.jugend:
+        return 'jugend';
+      case EventTargetGroup.aktive:
+        return 'aktive';
+      case EventTargetGroup.senioren:
+        return 'senioren';
+      case EventTargetGroup.alle:
+        return 'alle';
+    }
   }
 }

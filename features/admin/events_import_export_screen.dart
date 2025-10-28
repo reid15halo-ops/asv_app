@@ -106,9 +106,81 @@ class _EventsImportExportScreenState extends ConsumerState<EventsImportExportScr
             ),
             const SizedBox(height: 24),
 
+            // ICS Export Section
+            Text(
+              'Kalender Export (ICS)',
+              style: Theme.of(context).textTheme.headlineSmall,
+            ),
+            const SizedBox(height: 12),
+
+            Card(
+              color: Colors.purple.shade50,
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(Icons.calendar_month, color: Colors.purple.shade700),
+                        const SizedBox(width: 8),
+                        Text(
+                          'ICS Format - Universal kompatibel',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.purple.shade700,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      'Exportiert Events im iCalendar Format (.ics) - kompatibel mit Google Calendar, Outlook, Apple Calendar, etc.',
+                      style: TextStyle(fontSize: 13),
+                    ),
+                    const SizedBox(height: 16),
+
+                    ElevatedButton.icon(
+                      onPressed: _isLoading ? null : _exportUpcomingEventsIcs,
+                      icon: const Icon(Icons.calendar_today),
+                      label: const Text('Kommende Events (ICS)'),
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.all(16),
+                        backgroundColor: Colors.purple,
+                        foregroundColor: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+
+                    OutlinedButton.icon(
+                      onPressed: _isLoading ? null : _exportAllEventsIcs,
+                      icon: const Icon(Icons.calendar_month),
+                      label: const Text('Alle Events (ICS)'),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.all(16),
+                        foregroundColor: Colors.purple,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+
+                    TextButton.icon(
+                      onPressed: _isLoading ? null : _downloadIcsTemplate,
+                      icon: const Icon(Icons.file_download),
+                      label: const Text('ICS-Vorlage herunterladen'),
+                      style: TextButton.styleFrom(
+                        foregroundColor: Colors.purple,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+
             // Import Section
             Text(
-              'Import',
+              'Import (CSV)',
               style: Theme.of(context).textTheme.headlineSmall,
             ),
             const SizedBox(height: 12),
@@ -359,6 +431,95 @@ class _EventsImportExportScreenState extends ConsumerState<EventsImportExportScr
       if (mounted) {
         setState(() {
           _message = '✅ CSV-Vorlage zum Download bereit!';
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _message = 'Fehler: ${e.toString()}';
+        });
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
+  // ===== ICS Export Funktionen =====
+
+  Future<void> _exportUpcomingEventsIcs() async {
+    setState(() {
+      _isLoading = true;
+      _message = null;
+    });
+
+    try {
+      final repository = ref.read(eventRepositoryProvider);
+      await repository.exportUpcomingEventsAsIcs();
+
+      if (mounted) {
+        setState(() {
+          _message = '✅ Kommende Events als ICS-Kalender exportiert!\n'
+              'Die Datei kann jetzt in Google Calendar, Outlook, Apple Calendar, etc. importiert werden.';
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _message = 'Fehler beim ICS-Export: ${e.toString()}';
+        });
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
+  Future<void> _exportAllEventsIcs() async {
+    setState(() {
+      _isLoading = true;
+      _message = null;
+    });
+
+    try {
+      final repository = ref.read(eventRepositoryProvider);
+      await repository.exportAllEventsAsIcs();
+
+      if (mounted) {
+        setState(() {
+          _message = '✅ Alle Events als ICS-Kalender exportiert!\n'
+              'Die Datei kann jetzt in Google Calendar, Outlook, Apple Calendar, etc. importiert werden.';
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _message = 'Fehler beim ICS-Export: ${e.toString()}';
+        });
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
+  Future<void> _downloadIcsTemplate() async {
+    setState(() {
+      _isLoading = true;
+      _message = null;
+    });
+
+    try {
+      final repository = ref.read(eventRepositoryProvider);
+      await repository.shareIcsTemplate();
+
+      if (mounted) {
+        setState(() {
+          _message = '✅ ICS-Vorlage zum Download bereit!\n'
+              'Öffne die Datei mit einem Kalender-Programm deiner Wahl.';
         });
       }
     } catch (e) {
