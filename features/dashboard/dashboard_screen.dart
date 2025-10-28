@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:asv_app/providers/member_group_provider.dart';
 import 'package:asv_app/models/member_group.dart';
+import 'package:asv_app/features/dashboard/jugend_dashboard.dart';
 
 class DashboardScreen extends ConsumerStatefulWidget {
   const DashboardScreen({super.key});
@@ -27,6 +28,12 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     final user = Supabase.instance.client.auth.currentUser;
     final memberGroup = ref.watch(memberGroupProvider);
 
+    // Zeige spezielle Jugend-UI wenn Benutzer zur Jugend gehört
+    if (memberGroup == MemberGroup.jugend) {
+      return const JugendDashboard();
+    }
+
+    // Standard-Dashboard für Aktive und Senioren
     // Bestimme Logo und Farben basierend auf Gruppe
     final logo = memberGroup?.logoAsset ?? 'assets/logos/asv_logo.png';
     final groupName = memberGroup?.displayName ?? 'Mitglied';
