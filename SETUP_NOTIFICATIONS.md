@@ -3,8 +3,8 @@
 ## 📋 Voraussetzungen
 
 - Supabase-Projekt erstellt
-- `event` Tabelle existiert bereits
 - `member` Tabelle existiert bereits mit `user_id` Spalte
+- ⚠️ `event` Tabelle ist OPTIONAL (wird automatisch erkannt)
 
 ## 🚀 Setup über Supabase Dashboard (Empfohlen)
 
@@ -32,9 +32,11 @@ Du solltest folgende Erfolgsmeldungen sehen:
 - ✅ `CREATE TABLE notifications`
 - ✅ `CREATE INDEX` (5x)
 - ✅ `CREATE POLICY` (4x)
-- ✅ `CREATE FUNCTION` (3x)
-- ✅ `CREATE TRIGGER`
+- ✅ `CREATE FUNCTION` (2-3x)
 - ✅ `CREATE VIEW`
+- ℹ️ `NOTICE: event Tabelle existiert nicht - Trigger übersprungen` (wenn event nicht existiert)
+
+**Das ist normal!** Die Event-Integration wird automatisch aktiviert, sobald du eine `event` Tabelle erstellst.
 
 ### Schritt 5: Tabelle verifizieren
 
@@ -92,13 +94,50 @@ VALUES (
 
 ---
 
+## 🎯 Event-Integration (Optional)
+
+Falls du später eine `event` Tabelle erstellst, wird die Event-Integration automatisch aktiviert.
+
+**Manuelle Aktivierung:**
+Falls du die Event-Integration nachträglich hinzufügen möchtest:
+
+```sql
+-- Füge Foreign Key hinzu
+ALTER TABLE notifications
+ADD CONSTRAINT fk_notifications_event
+FOREIGN KEY (event_id) REFERENCES event(id) ON DELETE CASCADE;
+
+-- Erstelle Trigger-Function
+CREATE OR REPLACE FUNCTION notify_users_on_new_event()
+RETURNS TRIGGER AS $$
+BEGIN
+  INSERT INTO notifications (user_id, type, title, message, action_url, action_label, event_id)
+  SELECT
+    user_id,
+    'event_new',
+    'Neues Event: ' || NEW.title,
+    'Ein neues Event wurde erstellt',
+    '/events/' || NEW.id,
+    'Event ansehen',
+    NEW.id
+  FROM member
+  WHERE user_id IS NOT NULL;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Erstelle Trigger
+CREATE TRIGGER event_created_notification
+  AFTER INSERT ON event
+  FOR EACH ROW
+  EXECUTE FUNCTION notify_users_on_new_event();
+```
+
+---
+
 ## 🔧 Troubleshooting
 
 ### Problem: Migration schlägt fehl
-
-**Fehler: `relation "event" does not exist`**
-- **Lösung**: Stelle sicher, dass die `event` Tabelle existiert
-- Falls nicht, erstelle sie zuerst
 
 **Fehler: `relation "member" does not exist`**
 - **Lösung**: Stelle sicher, dass die `member` Tabelle existiert
