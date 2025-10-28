@@ -1,5 +1,6 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:asv_app/models/event.dart';
+import 'package:asv_app/services/event_csv_service.dart';
 
 class EventRepository {
   final SupabaseClient supa;
@@ -287,5 +288,113 @@ class EventRepository {
     } catch (e) {
       return false;
     }
+  }
+
+  // ===== CSV Import/Export Funktionen (nur für Admins) =====
+
+  /// Exportiert alle Events als CSV
+  Future<String> exportAllEventsToCsv() async {
+    try {
+      final response = await supa
+          .from('events')
+          .select('*')
+          .order('start_date', ascending: true);
+
+      final events = (response as List).map((e) => Event.fromJson(e)).toList();
+      return EventCsvService.exportEventsToCsv(events);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  /// Exportiert kommende Events als CSV
+  Future<void> exportUpcomingEventsAndShare() async {
+    try {
+      final events = await getUpcomingEvents(limit: 1000);
+      await EventCsvService.exportAndShareCsv(events, filename: 'kommende_events');
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  /// Exportiert alle Events und teilt sie
+  Future<void> exportAllEventsAndShare() async {
+    try {
+      final response = await supa
+          .from('events')
+          .select('*')
+          .order('start_date', ascending: true);
+
+      final events = (response as List).map((e) => Event.fromJson(e)).toList();
+      await EventCsvService.exportAndShareCsv(events, filename: 'alle_events');
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  /// Importiert Events aus CSV (nur für Admins)
+  /// Returns: Map mit 'success', 'imported', 'errors'
+  Future<Map<String, dynamic>> importEventsFromCsv(
+    String csvContent, {
+    bool replaceExisting = false,
+  }) async {
+    try {
+      // Parse CSV
+      final validation = await EventCsvService.validateCsv(csvContent);
+
+      if (!validation['valid']) {
+        return {
+          'success': false,
+          'imported': 0,
+          'errors': validation['errors'],
+        };
+      }
+
+      final List<Event> events = validation['events'];
+      int imported = 0;
+      final List<String> errors = [];
+
+      for (final event in events) {
+        try {
+          if (replaceExisting && event.id.isNotEmpty) {
+            // Prüfe ob Event existiert
+            final existing = await getEventById(event.id);
+
+            if (existing != null) {
+              // Update existierendes Event
+              await updateEvent(event);
+            } else {
+              // Erstelle neues Event
+              await createEvent(event);
+            }
+          } else {
+            // Erstelle immer neues Event
+            await createEvent(event);
+          }
+
+          imported++;
+        } catch (e) {
+          errors.add('Event "${event.title}": ${e.toString()}');
+        }
+      }
+
+      return {
+        'success': true,
+        'imported': imported,
+        'total': events.length,
+        'errors': errors,
+      };
+    } catch (e) {
+      return {
+        'success': false,
+        'imported': 0,
+        'errors': [e.toString()],
+      };
+    }
+  }
+
+  /// Teilt CSV-Template
+  Future<void> shareCsvTemplate() async {
+    await EventCsvService.shareTemplate();
   }
 }

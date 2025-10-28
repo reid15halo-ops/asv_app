@@ -8,6 +8,7 @@ import 'features/auth/sign_in_screen.dart';
 import 'features/auth/sign_up_screen.dart';
 import 'features/admin/export_panel.dart';
 import 'features/admin/member_group_admin_screen.dart';
+import 'features/admin/events_import_export_screen.dart';
 import 'features/events/events_screen.dart';
 
 /// Hält GoRouter in sync mit Supabase-Auth-Events
@@ -37,5 +38,6 @@ final appRouter = GoRouter(
     GoRoute(path: '/events', builder: (_, __) => const EventsScreen()),
     GoRoute(path: '/admin/export', builder: (_, __) => const ExportPanel()),
     GoRoute(path: '/admin/member-groups', builder: (_, __) => const MemberGroupAdminScreen()),
+    GoRoute(path: '/admin/events-import-export', builder: (_, __) => const EventsImportExportScreen()),
   ],
 );
