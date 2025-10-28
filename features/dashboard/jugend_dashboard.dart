@@ -6,6 +6,7 @@ import 'package:asv_app/widgets/jugend_widgets.dart';
 import 'package:asv_app/theme/theme.dart';
 import 'package:asv_app/providers/gamification_provider.dart';
 import 'package:asv_app/widgets/jugend_instagram_widget.dart';
+import 'package:asv_app/widgets/jugend_calendar_widget.dart';
 
 /// Spezielles Dashboard für Jugend mit modernem Design und Gamification
 class JugendDashboard extends ConsumerStatefulWidget {
@@ -177,6 +178,18 @@ class _JugendDashboardState extends ConsumerState<JugendDashboard>
                           ),
                           const SizedBox(height: 16),
                           _buildAchievements(achievements),
+                          const SizedBox(height: 24),
+
+                          // Events & Termine
+                          const Text(
+                            'Events & Termine',
+                            style: TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          const JugendCalendarCard(),
                           const SizedBox(height: 24),
 
                           // Instagram

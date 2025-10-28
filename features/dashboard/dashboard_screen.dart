@@ -4,8 +4,10 @@ import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:asv_app/providers/member_group_provider.dart';
 import 'package:asv_app/models/member_group.dart';
+import 'package:asv_app/models/event.dart';
 import 'package:asv_app/features/dashboard/jugend_dashboard.dart';
 import 'package:asv_app/widgets/instagram_widget.dart';
+import 'package:asv_app/widgets/calendar_widget.dart';
 
 class DashboardScreen extends ConsumerStatefulWidget {
   const DashboardScreen({super.key});
@@ -91,6 +93,15 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               child: const Text('Ranking ansehen'),
             ),
             const SizedBox(height: 24),
+            // Kalender Widget
+            CalendarWidget(
+              filterGroup: memberGroup == MemberGroup.senioren
+                  ? EventTargetGroup.senioren
+                  : memberGroup == MemberGroup.aktive
+                      ? EventTargetGroup.aktive
+                      : null,
+            ),
+            const SizedBox(height: 16),
             // Instagram Widget
             const InstagramWidget(),
             const SizedBox(height: 16),
