@@ -13,6 +13,8 @@ import 'features/events/events_screen.dart';
 import 'features/profile/profile_screen.dart';
 import 'features/profile/profile_edit_screen.dart';
 import 'features/catches/catch_list_screen.dart';
+import 'features/catches/catch_detail_screen.dart';
+import 'features/catches/catch_edit_screen.dart';
 
 /// Hält GoRouter in sync mit Supabase-Auth-Events
 class _AuthListenable extends ChangeNotifier {
@@ -39,6 +41,18 @@ final appRouter = GoRouter(
     GoRoute(path: '/ranking', builder: (_, __) => const RankingShellScreen()),
     GoRoute(path: '/catches', builder: (_, __) => const CatchListScreen()),
     GoRoute(path: '/catch/new', builder: (_, __) => const CatchCreateScreen()),
+    GoRoute(
+      path: '/catch/:id',
+      builder: (context, state) => CatchDetailScreen(
+        catchId: state.pathParameters['id']!,
+      ),
+    ),
+    GoRoute(
+      path: '/catch/:id/edit',
+      builder: (context, state) => CatchEditScreen(
+        catchId: state.pathParameters['id']!,
+      ),
+    ),
     GoRoute(path: '/events', builder: (_, __) => const EventsScreen()),
     GoRoute(path: '/profile', builder: (_, __) => const ProfileScreen()),
     GoRoute(path: '/profile/edit', builder: (_, __) => const ProfileEditScreen()),

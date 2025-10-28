@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:asv_app/models/catch.dart';
 import 'package:asv_app/providers/catch_provider.dart';
 
@@ -456,11 +457,7 @@ class _CatchListScreenState extends ConsumerState<CatchListScreen> {
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () {
                   Navigator.pop(context);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Fischart-Filter kommt bald'),
-                    ),
-                  );
+                  _showSpeciesFilter(context);
                 },
               ),
               ListTile(
@@ -469,11 +466,7 @@ class _CatchListScreenState extends ConsumerState<CatchListScreen> {
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () {
                   Navigator.pop(context);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Gewässer-Filter kommt bald'),
-                    ),
-                  );
+                  _showWaterBodyFilter(context);
                 },
               ),
               ListTile(
@@ -579,6 +572,116 @@ class _CatchListScreenState extends ConsumerState<CatchListScreen> {
         picked.start,
         picked.end,
       );
+    }
+  }
+
+  void _showSpeciesFilter(BuildContext context) async {
+    try {
+      // Load species from database
+      final supa = Supabase.instance.client;
+      final data = await supa
+          .from('species')
+          .select('id, name_de')
+          .order('name_de');
+
+      final species = (data as List).cast<Map<String, dynamic>>();
+
+      if (!mounted) return;
+
+      final selected = await showDialog<String>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Fischart wählen'),
+          content: SizedBox(
+            width: double.maxFinite,
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: species.length,
+              itemBuilder: (context, index) {
+                final spec = species[index];
+                return ListTile(
+                  title: Text(spec['name_de'] as String),
+                  trailing: ref.read(catchNotifierProvider.notifier).filterSpeciesId == spec['id']
+                      ? const Icon(Icons.check, color: Colors.green)
+                      : null,
+                  onTap: () => Navigator.pop(context, spec['id'] as String),
+                );
+              },
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Abbrechen'),
+            ),
+          ],
+        ),
+      );
+
+      if (selected != null) {
+        ref.read(catchNotifierProvider.notifier).setSpeciesFilter(selected);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Fehler beim Laden der Arten: $e')),
+        );
+      }
+    }
+  }
+
+  void _showWaterBodyFilter(BuildContext context) async {
+    try {
+      // Load water bodies from database
+      final supa = Supabase.instance.client;
+      final data = await supa
+          .from('water_body')
+          .select('id, name')
+          .order('name');
+
+      final waterBodies = (data as List).cast<Map<String, dynamic>>();
+
+      if (!mounted) return;
+
+      final selected = await showDialog<String>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Gewässer wählen'),
+          content: SizedBox(
+            width: double.maxFinite,
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: waterBodies.length,
+              itemBuilder: (context, index) {
+                final water = waterBodies[index];
+                return ListTile(
+                  title: Text(water['name'] as String),
+                  trailing: ref.read(catchNotifierProvider.notifier).filterWaterBodyId == water['id']
+                      ? const Icon(Icons.check, color: Colors.green)
+                      : null,
+                  onTap: () => Navigator.pop(context, water['id'] as String),
+                );
+              },
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Abbrechen'),
+            ),
+          ],
+        ),
+      );
+
+      if (selected != null) {
+        ref.read(catchNotifierProvider.notifier).setWaterBodyFilter(selected);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Fehler beim Laden der Gewässer: $e')),
+        );
+      }
     }
   }
 }
