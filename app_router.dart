@@ -10,6 +10,7 @@ import 'features/admin/export_panel.dart';
 import 'features/admin/member_group_admin_screen.dart';
 import 'features/admin/events_import_export_screen.dart';
 import 'features/events/events_screen.dart';
+import 'features/events/event_detail_screen.dart';
 import 'features/profile/profile_screen.dart';
 import 'features/profile/profile_edit_screen.dart';
 import 'features/catches/catch_list_screen.dart';
@@ -54,6 +55,12 @@ final appRouter = GoRouter(
       ),
     ),
     GoRoute(path: '/events', builder: (_, __) => const EventsScreen()),
+    GoRoute(
+      path: '/events/:id',
+      builder: (context, state) => EventDetailScreen(
+        eventId: state.pathParameters['id']!,
+      ),
+    ),
     GoRoute(path: '/profile', builder: (_, __) => const ProfileScreen()),
     GoRoute(path: '/profile/edit', builder: (_, __) => const ProfileEditScreen()),
     GoRoute(path: '/admin/export', builder: (_, __) => const ExportPanel()),

@@ -1,5 +1,6 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:asv_app/models/event.dart';
+import 'package:asv_app/models/event_participant.dart';
 import 'package:asv_app/services/event_csv_service.dart';
 import 'package:asv_app/services/event_ics_service.dart';
 import 'package:share_plus/share_plus.dart';
@@ -291,6 +292,65 @@ class EventRepository {
       return response != null;
     } catch (e) {
       return false;
+    }
+  }
+
+  /// Gibt alle Teilnehmer eines Events zurück
+  Future<List<EventParticipant>> getEventParticipants(String eventId) async {
+    try {
+      final response = await supa
+          .from('event_participants')
+          .select('''
+            *,
+            member:member_id(first_name, last_name, email)
+          ''')
+          .eq('event_id', eventId)
+          .in_('status', ['registered', 'confirmed', 'attended'])
+          .order('registered_at', ascending: true);
+
+      return (response as List).map((json) {
+        // Extrahiere Member-Daten aus dem Join
+        String? memberName;
+        String? memberEmail;
+
+        if (json['member'] != null) {
+          final member = json['member'] as Map<String, dynamic>;
+          final firstName = member['first_name'] as String?;
+          final lastName = member['last_name'] as String?;
+          memberEmail = member['email'] as String?;
+
+          if (firstName != null && lastName != null) {
+            memberName = '$firstName $lastName';
+          } else if (firstName != null) {
+            memberName = firstName;
+          } else if (lastName != null) {
+            memberName = lastName;
+          }
+        }
+
+        return EventParticipant.fromJson({
+          ...json,
+          'member_name': memberName,
+          'member_email': memberEmail,
+        });
+      }).toList();
+    } catch (e) {
+      return [];
+    }
+  }
+
+  /// Gibt die Anzahl der Teilnehmer eines Events zurück
+  Future<int> getEventParticipantCount(String eventId) async {
+    try {
+      final response = await supa
+          .from('event_participants')
+          .select('id')
+          .eq('event_id', eventId)
+          .in_('status', ['registered', 'confirmed', 'attended']);
+
+      return (response as List).length;
+    } catch (e) {
+      return 0;
     }
   }
 
