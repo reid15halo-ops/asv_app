@@ -16,6 +16,7 @@ import 'features/profile/profile_edit_screen.dart';
 import 'features/catches/catch_list_screen.dart';
 import 'features/catches/catch_detail_screen.dart';
 import 'features/catches/catch_edit_screen.dart';
+import 'features/weather/weather_bite_screen.dart';
 
 /// Hält GoRouter in sync mit Supabase-Auth-Events
 class _AuthListenable extends ChangeNotifier {
@@ -61,6 +62,7 @@ final appRouter = GoRouter(
         eventId: state.pathParameters['id']!,
       ),
     ),
+    GoRoute(path: '/weather', builder: (_, __) => const WeatherBiteScreen()),
     GoRoute(path: '/profile', builder: (_, __) => const ProfileScreen()),
     GoRoute(path: '/profile/edit', builder: (_, __) => const ProfileEditScreen()),
     GoRoute(path: '/admin/export', builder: (_, __) => const ExportPanel()),
