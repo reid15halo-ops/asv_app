@@ -123,12 +123,9 @@ class _JugendDashboardState extends ConsumerState<JugendDashboard>
                 actions: [
                   if (user != null)
                     IconButton(
-                      tooltip: 'Abmelden',
-                      onPressed: () async {
-                        await Supabase.instance.client.auth.signOut();
-                        if (context.mounted) context.go('/auth');
-                      },
-                      icon: const Icon(Icons.logout, color: Colors.white),
+                      tooltip: 'Profil',
+                      onPressed: () => context.push('/profile'),
+                      icon: const Icon(Icons.account_circle, color: Colors.white),
                     ),
                 ],
               ),

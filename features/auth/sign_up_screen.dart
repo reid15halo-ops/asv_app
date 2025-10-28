@@ -10,6 +10,8 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
+  final _firstName = TextEditingController();
+  final _lastName = TextEditingController();
   final _email = TextEditingController();
   final _pw = TextEditingController();
   final _pwConfirm = TextEditingController();
@@ -103,13 +105,29 @@ class _SignUpScreenState extends State<SignUpScreen> {
     if (form == null || !form.validate()) return;
     setState(() { _busy = true; _err = null; });
     try {
-      await Supabase.instance.client.auth.signUp(
+      // Registriere User bei Supabase Auth
+      final response = await Supabase.instance.client.auth.signUp(
         email: _email.text.trim(),
         password: _pw.text,
+        data: {
+          'first_name': _firstName.text.trim(),
+          'last_name': _lastName.text.trim(),
+        },
       );
+
       if (mounted) {
-        // After signup we redirect to the sign-in page where the user can login
-        // (or confirm their email first if required by Supabase settings).
+        // Zeige Erfolgs-Nachricht
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Registrierung erfolgreich! Bitte melde dich an.',
+            ),
+            backgroundColor: Colors.green,
+            duration: Duration(seconds: 3),
+          ),
+        );
+
+        // Nach erfolgreicher Registrierung zur Login-Seite
         context.go('/auth');
       }
     } on AuthException catch (e) {
@@ -132,8 +150,37 @@ class _SignUpScreenState extends State<SignUpScreen> {
               key: _formKey,
               child: Column(mainAxisSize: MainAxisSize.min, children: [
                 TextFormField(
+                  controller: _firstName,
+                  decoration: const InputDecoration(
+                    labelText: 'Vorname *',
+                    prefixIcon: Icon(Icons.person),
+                  ),
+                  validator: (v) {
+                    final s = v?.trim() ?? '';
+                    if (s.isEmpty) return 'Bitte Vornamen eingeben';
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 12),
+                TextFormField(
+                  controller: _lastName,
+                  decoration: const InputDecoration(
+                    labelText: 'Nachname *',
+                    prefixIcon: Icon(Icons.person_outline),
+                  ),
+                  validator: (v) {
+                    final s = v?.trim() ?? '';
+                    if (s.isEmpty) return 'Bitte Nachnamen eingeben';
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 12),
+                TextFormField(
                   controller: _email,
-                  decoration: const InputDecoration(labelText: 'E-Mail'),
+                  decoration: const InputDecoration(
+                    labelText: 'E-Mail *',
+                    prefixIcon: Icon(Icons.email),
+                  ),
                   validator: _emailValidator,
                   keyboardType: TextInputType.emailAddress,
                   onChanged: _onEmailChanged,
@@ -198,8 +245,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   @override
   void dispose() {
+    _firstName.dispose();
+    _lastName.dispose();
     _email.dispose();
     _pw.dispose();
+    _pwConfirm.dispose();
     super.dispose();
   }
 }

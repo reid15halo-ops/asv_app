@@ -10,6 +10,8 @@ import 'features/admin/export_panel.dart';
 import 'features/admin/member_group_admin_screen.dart';
 import 'features/admin/events_import_export_screen.dart';
 import 'features/events/events_screen.dart';
+import 'features/profile/profile_screen.dart';
+import 'features/profile/profile_edit_screen.dart';
 
 /// Hält GoRouter in sync mit Supabase-Auth-Events
 class _AuthListenable extends ChangeNotifier {
@@ -36,6 +38,8 @@ final appRouter = GoRouter(
     GoRoute(path: '/ranking', builder: (_, __) => const RankingShellScreen()),
     GoRoute(path: '/catch/new', builder: (_, __) => const CatchCreateScreen()),
     GoRoute(path: '/events', builder: (_, __) => const EventsScreen()),
+    GoRoute(path: '/profile', builder: (_, __) => const ProfileScreen()),
+    GoRoute(path: '/profile/edit', builder: (_, __) => const ProfileEditScreen()),
     GoRoute(path: '/admin/export', builder: (_, __) => const ExportPanel()),
     GoRoute(path: '/admin/member-groups', builder: (_, __) => const MemberGroupAdminScreen()),
     GoRoute(path: '/admin/events-import-export', builder: (_, __) => const EventsImportExportScreen()),

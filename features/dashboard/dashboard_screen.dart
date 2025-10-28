@@ -47,13 +47,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         actions: [
           if (user != null)
             IconButton(
-              tooltip: 'Abmelden',
-              onPressed: () async {
-                await Supabase.instance.client.auth.signOut();
-                ref.read(memberGroupProvider.notifier).reset();
-                if (context.mounted) context.go('/auth');
-              },
-              icon: const Icon(Icons.logout),
+              tooltip: 'Profil',
+              onPressed: () => context.push('/profile'),
+              icon: const Icon(Icons.account_circle),
             ),
         ],
       ),
