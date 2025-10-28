@@ -3,6 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'features/dashboard/dashboard_screen.dart';
 import 'features/dashboard/catch_create_screen.dart';
+import 'features/catches/catch_list_screen.dart';
+import 'features/catches/catch_detail_screen.dart';
 import 'features/ranking/ranking_shell_screen.dart';
 import 'features/auth/sign_in_screen.dart';
 import 'features/auth/sign_up_screen.dart';
@@ -34,6 +36,14 @@ final appRouter = GoRouter(
     GoRoute(path: '/auth', builder: (_, __) => const SignInScreen()),
     GoRoute(path: '/auth/signup', builder: (_, __) => const SignUpScreen()),
     GoRoute(path: '/ranking', builder: (_, __) => const RankingShellScreen()),
+    GoRoute(path: '/catches', builder: (_, __) => const CatchListScreen()),
+    GoRoute(
+      path: '/catch/:id',
+      builder: (_, state) {
+        final id = int.parse(state.pathParameters['id']!);
+        return CatchDetailScreen(catchId: id);
+      },
+    ),
     GoRoute(path: '/catch/new', builder: (_, __) => const CatchCreateScreen()),
     GoRoute(path: '/notifications', builder: (_, __) => const NotificationsScreen()),
     GoRoute(path: '/admin/export', builder: (_, __) => const ExportPanel()),
