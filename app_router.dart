@@ -5,6 +5,8 @@ import 'features/dashboard/dashboard_screen.dart';
 import 'features/dashboard/catch_create_screen.dart';
 import 'features/catches/catch_list_screen.dart';
 import 'features/catches/catch_detail_screen.dart';
+import 'features/events/event_list_screen.dart';
+import 'features/events/event_detail_screen.dart';
 import 'features/ranking/ranking_shell_screen.dart';
 import 'features/auth/sign_in_screen.dart';
 import 'features/auth/sign_up_screen.dart';
@@ -45,6 +47,14 @@ final appRouter = GoRouter(
       },
     ),
     GoRoute(path: '/catch/new', builder: (_, __) => const CatchCreateScreen()),
+    GoRoute(path: '/events', builder: (_, __) => const EventListScreen()),
+    GoRoute(
+      path: '/events/:id',
+      builder: (_, state) {
+        final id = int.parse(state.pathParameters['id']!);
+        return EventDetailScreen(eventId: id);
+      },
+    ),
     GoRoute(path: '/notifications', builder: (_, __) => const NotificationsScreen()),
     GoRoute(path: '/admin/export', builder: (_, __) => const ExportPanel()),
     GoRoute(path: '/admin/member-groups', builder: (_, __) => const MemberGroupAdminScreen()),
