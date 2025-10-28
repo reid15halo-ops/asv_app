@@ -84,6 +84,12 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               child: const Text('Fang erfassen'),
             ),
             const SizedBox(height: 8),
+            OutlinedButton.icon(
+              onPressed: () => context.push('/catches'),
+              icon: const Icon(Icons.phishing),
+              label: const Text('Meine Fänge'),
+            ),
+            const SizedBox(height: 8),
             OutlinedButton(
               onPressed: () => context.push('/ranking'),
               child: const Text('Ranking ansehen'),

@@ -370,21 +370,19 @@ class _JugendDashboardState extends ConsumerState<JugendDashboard>
           children: [
             Expanded(
               child: JugendGradientButton(
-                label: 'Ranking',
-                icon: Icons.leaderboard,
+                label: 'Meine Fänge',
+                icon: Icons.phishing,
                 gradient: JugendGradients.accentGradient,
-                onPressed: () => context.push('/ranking'),
+                onPressed: () => context.push('/catches'),
               ),
             ),
             const SizedBox(width: 12),
             Expanded(
               child: JugendGradientButton(
-                label: 'Wetter',
-                icon: Icons.wb_sunny,
+                label: 'Ranking',
+                icon: Icons.leaderboard,
                 gradient: JugendGradients.successGradient,
-                onPressed: () {
-                  // TODO: Navigate to weather
-                },
+                onPressed: () => context.push('/ranking'),
               ),
             ),
           ],

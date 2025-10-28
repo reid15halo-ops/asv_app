@@ -12,6 +12,7 @@ import 'features/admin/events_import_export_screen.dart';
 import 'features/events/events_screen.dart';
 import 'features/profile/profile_screen.dart';
 import 'features/profile/profile_edit_screen.dart';
+import 'features/catches/catch_list_screen.dart';
 
 /// Hält GoRouter in sync mit Supabase-Auth-Events
 class _AuthListenable extends ChangeNotifier {
@@ -36,6 +37,7 @@ final appRouter = GoRouter(
     GoRoute(path: '/auth', builder: (_, __) => const SignInScreen()),
     GoRoute(path: '/auth/signup', builder: (_, __) => const SignUpScreen()),
     GoRoute(path: '/ranking', builder: (_, __) => const RankingShellScreen()),
+    GoRoute(path: '/catches', builder: (_, __) => const CatchListScreen()),
     GoRoute(path: '/catch/new', builder: (_, __) => const CatchCreateScreen()),
     GoRoute(path: '/events', builder: (_, __) => const EventsScreen()),
     GoRoute(path: '/profile', builder: (_, __) => const ProfileScreen()),
