@@ -2,10 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:asv_app/services/wordpress_sync_service.dart';
 import 'package:asv_app/repositories/event_repository.dart';
-
-// HINWEIS: Diese Import wird einen Fehler werfen, bis du wordpress_config.dart erstellst
-// Folge der Anleitung in docs/WORDPRESS_SYNC_SETUP.md
-// import 'package:asv_app/config/wordpress_config.dart';
+import 'package:asv_app/config/wordpress_config.dart';
 
 /// WordPress Sync Service Provider
 ///
@@ -17,20 +14,11 @@ import 'package:asv_app/repositories/event_repository.dart';
 final wordPressSyncServiceProvider = Provider<WordPressSyncService>((ref) {
   final repository = EventRepository(Supabase.instance.client);
 
-  // TODO: Uncomment nach WordPress-Konfiguration
-  // return WordPressSyncService(
-  //   eventRepository: repository,
-  //   wordpressUrl: WordPressConfig.wordpressUrl,
-  //   username: WordPressConfig.username,
-  //   applicationPassword: WordPressConfig.applicationPassword,
-  // );
-
-  // PLACEHOLDER: Bis WordPress konfiguriert ist
   return WordPressSyncService(
     eventRepository: repository,
-    wordpressUrl: 'https://example.com', // TODO: WordPress URL
-    username: 'admin', // TODO: WordPress Username
-    applicationPassword: 'xxxx xxxx xxxx xxxx', // TODO: Application Password
+    wordpressUrl: WordPressConfig.wordpressUrl,
+    username: WordPressConfig.username,
+    applicationPassword: WordPressConfig.applicationPassword,
   );
 });
 
