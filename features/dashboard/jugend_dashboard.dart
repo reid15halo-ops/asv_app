@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:asv_app/widgets/jugend_widgets.dart';
 import 'package:asv_app/theme/theme.dart';
 import 'package:asv_app/providers/gamification_provider.dart';
@@ -181,6 +182,18 @@ class _JugendDashboardState extends ConsumerState<JugendDashboard>
                           ),
                           const SizedBox(height: 16),
                           _buildAchievements(achievements),
+                          const SizedBox(height: 24),
+
+                          // Instagram Feed
+                          const Text(
+                            'Folge uns auf Instagram',
+                            style: TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          _buildInstagramFeed(),
                           const SizedBox(height: 20),
                         ],
                       ),
@@ -435,6 +448,112 @@ class _JugendDashboardState extends ConsumerState<JugendDashboard>
                 );
               }).toList(),
             ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInstagramFeed() {
+    return JugendCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  gradient: JugendGradients.accentGradient,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(
+                  Icons.camera_alt,
+                  color: Colors.white,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 12),
+              const Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '@asv_grossostheimjugend',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      'ASV Großostheim Jugend',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              InkWell(
+                onTap: () async {
+                  final uri = Uri.parse('https://www.instagram.com/asv_grossostheimjugend/');
+                  if (await canLaunchUrl(uri)) {
+                    await launchUrl(uri, mode: LaunchMode.externalApplication);
+                  }
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  decoration: BoxDecoration(
+                    gradient: JugendGradients.primaryGradient,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: const Text(
+                    'Folgen',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          const Divider(height: 1),
+          const SizedBox(height: 16),
+          // Instagram Feed Container
+          Container(
+            height: 400,
+            decoration: BoxDecoration(
+              color: Colors.grey[100],
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: const InAppWebView(
+                initialUrlRequest: URLRequest(
+                  url: WebUri('https://www.instagram.com/asv_grossostheimjugend/embed/'),
+                ),
+                initialSettings: InAppWebViewSettings(
+                  transparentBackground: true,
+                  supportZoom: false,
+                  javaScriptEnabled: true,
+                  disableHorizontalScroll: true,
+                  disableVerticalScroll: false,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          Center(
+            child: Text(
+              'Neueste Posts von unserer Jugendabteilung',
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey[600],
+              ),
+            ),
+          ),
         ],
       ),
     );
