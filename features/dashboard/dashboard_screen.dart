@@ -86,6 +86,11 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             onPressed: () => context.push('/ranking'),
             child: const Text('Ranking ansehen'),
           ),
+          const SizedBox(height: 8),
+          OutlinedButton(
+            onPressed: () => context.push('/events'),
+            child: const Text('Events'),
+          ),
         ]),
       ),
     );

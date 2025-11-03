@@ -370,6 +370,28 @@ class _JugendDashboardState extends ConsumerState<JugendDashboard>
             ),
           ],
         ),
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            Expanded(
+              child: JugendGradientButton(
+                label: 'Instagram',
+                icon: Icons.photo_camera,
+                gradient: JugendGradients.purpleGradient,
+                onPressed: () => context.push('/instagram'),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: JugendGradientButton(
+                label: 'Events',
+                icon: Icons.event,
+                gradient: JugendGradients.accentGradient,
+                onPressed: () => context.push('/events'),
+              ),
+            ),
+          ],
+        ),
       ],
     );
   }

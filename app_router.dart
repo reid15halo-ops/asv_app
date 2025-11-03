@@ -12,6 +12,10 @@ import 'features/admin/admin_announcement_screen.dart';
 import 'features/notifications/notifications_screen.dart';
 import 'features/notifications/notification_settings_screen.dart';
 import 'features/weather/weather_bite_screen.dart';
+import 'features/social/instagram_feed_screen.dart';
+import 'features/events/events_list_screen.dart';
+import 'features/events/event_detail_screen.dart';
+import 'features/events/event_form_screen.dart';
 
 /// Hält GoRouter in sync mit Supabase-Auth-Events
 class _AuthListenable extends ChangeNotifier {
@@ -40,8 +44,25 @@ final appRouter = GoRouter(
     GoRoute(path: '/notifications', builder: (_, __) => const NotificationsScreen()),
     GoRoute(path: '/notifications/settings', builder: (_, __) => const NotificationSettingsScreen()),
     GoRoute(path: '/weather', builder: (_, __) => const WeatherBiteScreen()),
+    GoRoute(path: '/instagram', builder: (_, __) => const InstagramFeedScreen()),
     GoRoute(path: '/admin/export', builder: (_, __) => const ExportPanel()),
     GoRoute(path: '/admin/member-groups', builder: (_, __) => const MemberGroupAdminScreen()),
     GoRoute(path: '/admin/announcements', builder: (_, __) => const AdminAnnouncementScreen()),
+    GoRoute(path: '/events', builder: (_, __) => const EventsListScreen()),
+    GoRoute(path: '/events/new', builder: (_, __) => const EventFormScreen()),
+    GoRoute(
+      path: '/events/:id',
+      builder: (_, state) {
+        final id = int.parse(state.pathParameters['id']!);
+        return EventDetailScreen(eventId: id);
+      },
+    ),
+    GoRoute(
+      path: '/events/:id/edit',
+      builder: (_, state) {
+        final id = int.parse(state.pathParameters['id']!);
+        return EventFormScreen(eventId: id);
+      },
+    ),
   ],
 );
