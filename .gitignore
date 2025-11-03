@@ -52,3 +52,6 @@ android/key.properties
 .env
 .env.local
 .env.*.local
+
+# WordPress Credentials (NIEMALS committen!)
+lib/config/wordpress_config.dart
