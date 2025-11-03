@@ -384,6 +384,13 @@ class _JugendDashboardState extends ConsumerState<JugendDashboard>
             ),
           ],
         ),
+        const SizedBox(height: 12),
+        JugendGradientButton(
+          label: 'Instagram Feed',
+          icon: Icons.photo_camera,
+          gradient: JugendGradients.purpleGradient,
+          onPressed: () => context.push('/instagram'),
+        ),
       ],
     );
   }
