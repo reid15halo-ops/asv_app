@@ -88,14 +88,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   Future<bool> _checkEmailTaken(String email) async {
-    // TODO: implement a real check with Supabase. One approach:
-    // create a Postgres function or RPC that checks the users table for the email.
-    // Example SQL:
-    // SELECT EXISTS(SELECT 1 FROM auth.users WHERE email = $1);
-    // and expose as RPC or call via Supabase SQL.
-    // For now, return false to indicate available.
-    await Future.delayed(const Duration(milliseconds: 200));
-    return false;
+    try {
+      // Rufe die Supabase RPC-Funktion auf
+      final response = await Supabase.instance.client
+          .rpc('check_email_exists', params: {'email_to_check': email});
+
+      // Response ist true wenn E-Mail existiert, false wenn verfügbar
+      return response as bool;
+    } catch (e) {
+      // Bei Fehler (z.B. Netzwerkfehler) geben wir false zurück
+      // damit der User nicht blockiert wird
+      debugPrint('Error checking email: $e');
+      return false;
+    }
   }
 
   Future<void> _signUp() async {

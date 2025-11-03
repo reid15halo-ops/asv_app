@@ -1,4 +1,4 @@
-package com.example.asv_app
+package de.asvgrossostheim.app
 
 import io.flutter.embedding.android.FlutterActivity
 

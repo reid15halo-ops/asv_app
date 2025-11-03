@@ -32,6 +32,12 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
       appBar: AppBar(
         title: const Text('Benachrichtigungen'),
         actions: [
+          // Settings
+          IconButton(
+            icon: const Icon(Icons.settings),
+            tooltip: 'Einstellungen',
+            onPressed: () => context.push('/notifications/settings'),
+          ),
           // Filter Toggle (Ungelesen)
           IconButton(
             icon: Icon(_showUnreadOnly ? Icons.filter_alt : Icons.filter_alt_outlined),

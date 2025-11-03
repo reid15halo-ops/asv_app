@@ -364,7 +364,7 @@ class _JugendDashboardState extends ConsumerState<JugendDashboard>
                 icon: Icons.wb_sunny,
                 gradient: JugendGradients.successGradient,
                 onPressed: () {
-                  // TODO: Navigate to weather
+                  context.push('/weather');
                 },
               ),
             ),
